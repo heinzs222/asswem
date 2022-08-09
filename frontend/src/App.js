@@ -1,25 +1,40 @@
-import * as React from "react";
-import Map, { Marker, Popup } from "react-map-gl";
+import React, { Component } from "react";
+import Map, { Marker, Popup, MapRef } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { LocationOn, Star } from "@material-ui/icons";
 import "./app.css";
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { format } from "timeago.js";
-import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
+import mapboxgl from "mapbox-gl";
+import { useRef, useCallback } from "react";
+import { render } from "react-dom";
 
+const initialViewState = {
+    latitude: 37.7751,
+    longitude: -122.4193,
+    zoom: 11,
+    bearing: 0,
+    pitch: 0,
+};
 function App() {
-    const currentUser = "jane";
+    const mapRef = useRef < Map > null;
+    const onSelectCity = useCallback(({ longitude, latitude }) => {
+        mapRef.current?.flyTo({
+            center: [longitude, latitude],
+            duration: 2000,
+        });
+    }, []);
+    const currentUser = "hatem";
+    const [viewport, setViewport] = useState({
+        latitude: 37.2768,
+        longitude: 9.8642,
+        zoom: 14,
+    });
     const [pins, setPins] = useState([]);
     const [currentPlaceId, setCurrentPlaceId] = useState(null);
     const [newPlace, setNewPlace] = useState(null);
-    const [viewport, setViewPort] = useState({
-        width: "100vw",
-        height: "100vh",
-        longitude: 9.8642,
-        latitude: 37.2768,
-        zoom: 14,
-    });
+
     useEffect(() => {
         const getPins = async () => {
             try {
@@ -31,12 +46,14 @@ function App() {
         };
         getPins();
     }, []);
-    const handleMarkerClick = (id, latt, longe) => {
+    const handleMarkerClick = (id, latt, longg) => {
         setCurrentPlaceId(id);
+        setViewport({ latitude: latt, longitude: longg });
     };
     const handleAddClick = (e) => {
         const latt = e.lngLat.lat;
         const longe = e.lngLat.lng;
+        e.target.doubleClickZoom._clickZoom._enabled = false;
         setNewPlace({
             latt,
             longe,
@@ -45,15 +62,13 @@ function App() {
 
     return (
         <Map
-            initialViewState={{
-                longitude: 9.8642,
-                latitude: 37.2768,
-                zoom: 14,
-            }}
+            ref={mapRef}
+            {...viewport}
             style={{ width: "100wh", height: "100vh" }}
             mapboxAccessToken={process.env.REACT_APP_MAPBOX}
             mapStyle="mapbox://styles/mapbox/streets-v9"
             onDblClick={handleAddClick}
+            onDrag={setViewport}
         >
             {pins.map((p) => (
                 <>
@@ -72,7 +87,7 @@ function App() {
                                 cursor: "pointer",
                             }}
                             onClick={() =>
-                                handleMarkerClick(p._id, p.latt, p.longe)
+                                handleMarkerClick(p._id, p.long, p.lat)
                             }
                         />
                     </Marker>
@@ -112,16 +127,16 @@ function App() {
                 </>
             ))}
             {newPlace && (
-                <Popup
+                <Marker
                     longitude={newPlace.longe}
                     latitude={newPlace.latt}
                     closeButton={true}
                     closeOnClick={false}
-                    anchor="left"
+                    anchor="center"
                     onClose={() => setNewPlace(null)}
                 >
-                    hello
-                </Popup>
+                    <LocationOn />
+                </Marker>
             )}
         </Map>
     );
