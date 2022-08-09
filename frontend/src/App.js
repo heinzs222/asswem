@@ -19,12 +19,14 @@ const initialViewState = {
 };
 function App() {
     const mapRef = useRef < Map > null;
+
     const onSelectCity = useCallback(({ longitude, latitude }) => {
         mapRef.current?.flyTo({
             center: [longitude, latitude],
             duration: 2000,
         });
     }, []);
+
     const currentUser = "hatem";
     const [viewport, setViewport] = useState({
         latitude: 37.2768,
