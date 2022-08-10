@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { format } from "timeago.js";
 
-import { render } from "react-dom";
+import Register from "./components/Register";
 
 export default function App() {
     const mapRef = useRef(null);
@@ -20,7 +20,7 @@ export default function App() {
         console.log(latitude);
     }, []);
 
-    const currentUser = "hatem";
+    const [currentUser, setCurrentUser] = useState(null);
     const [viewport, setViewport] = useState({
         latitude: 37.2768,
         longitude: 9.8642,
@@ -29,6 +29,10 @@ export default function App() {
     const [pins, setPins] = useState([]);
     const [currentPlaceId, setCurrentPlaceId] = useState(null);
     const [newPlace, setNewPlace] = useState(null);
+
+    const [title, setTitle] = useState(null);
+    const [desc, setDesc] = useState(null);
+    const [rating, setRating] = useState(0);
 
     useEffect(() => {
         const getPins = async () => {
@@ -56,8 +60,27 @@ export default function App() {
         });
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const newPin = {
+            username: currentUser,
+            title,
+            desc,
+            rating,
+            lat: newPlace.longe,
+            long: newPlace.latt,
+        };
+        try {
+            const res = await axios.post("/pins", newPin);
+            setPins([...pins, res.data]);
+            setNewPlace(null);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
-        <>
+        <div style={{ height: "100vh", width: "100%" }}>
             <Map
                 initialViewState={viewport}
                 ref={mapRef}
@@ -71,11 +94,12 @@ export default function App() {
                         <Marker
                             longitude={p.lat}
                             latitude={p.long}
-                            offsetLeft={-20}
-                            offsetTop={-10}
+                            offsetLeft={-viewport.zoom * 3.5}
+                            offsetTop={-viewport.zoom * 7}
                         >
                             <LocationOn
                                 style={{
+                                    fontSize: viewport.zoom * 7,
                                     color:
                                         p.username === currentUser
                                             ? "tomato"
@@ -103,11 +127,9 @@ export default function App() {
                                     <p className="desc">{p.desc}</p>
                                     <label>a3tih note</label>
                                     <div className="stars">
-                                        <Star className="stars" />
-                                        <Star className="stars" />
-                                        <Star className="stars" />
-                                        <Star className="stars" />
-                                        <Star className="stars" />
+                                        {Array(p.rating).fill(
+                                            <Star className="stars" />
+                                        )}
                                     </div>
 
                                     <label>Information</label>
@@ -132,13 +154,21 @@ export default function App() {
                         onClose={() => setNewPlace(null)}
                     >
                         <div>
-                            <form>
+                            <form onSubmit={handleSubmit}>
                                 <label>esm l7anout</label>
-                                <input placeholder="esm l7anout"></input>
+                                <input
+                                    placeholder="esm l7anout"
+                                    onChange={(e) => setTitle(e.target.value)}
+                                ></input>
                                 <label>chnowa chrit w b9adech</label>
-                                <textarea placeholder="chnowa sar" />
+                                <textarea
+                                    placeholder="chnowa sar"
+                                    onChange={(e) => setDesc(e.target.value)}
+                                />
                                 <label>a3tih note</label>
-                                <select>
+                                <select
+                                    onChange={(e) => setRating(e.target.value)}
+                                >
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
@@ -152,10 +182,16 @@ export default function App() {
                         </div>
                     </Popup>
                 )}
+                {currentUser ? (
+                    <button className="button logout">Logout</button>
+                ) : (
+                    <div className="buttons">
+                        <button className="button login">Login</button>
+                        <button className="button register">Register</button>
+                    </div>
+                )}
+                <Register />
             </Map>
-        </>
+        </div>
     );
-}
-export function renderToDom(container) {
-    render(<App />, container);
 }
