@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Map {
     position: absolute;
     z-index: -1;
@@ -9,30 +10,45 @@ Map {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+=======
+.App {
+  text-align: center;
+>>>>>>> 448bad99d08d1321838ff60a89f7b55b6938ae33
 }
 
-label {
-    width: max-content;
-    color: tomato;
-    font-size: 13px;
-    border-bottom: 0.5px solid tomato;
-    margin: 3px 0;
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
 }
 
-.desc {
-    font-size: 14px;
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
 }
 
-.stars {
-    color: gold;
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 }
 
-.username {
-    font-size: 14px;
+.App-link {
+  color: #61dafb;
 }
 
-.date {
-    font-size: 12px;
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 form {
     width: 250px;
