@@ -55,6 +55,7 @@ textarea::placeholder {
 
 .login {
     background-color: teal;
+    margin-right: 10px;
 }
 
 .logout {
@@ -63,4 +64,7 @@ textarea::placeholder {
 
 .register {
     background-color: slateblue;
+}
+.stars {
+    color: gold;
 }

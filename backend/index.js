@@ -4,9 +4,10 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const userRoute = require("./routes/users");
 const pinRoute = require("./routes/pins");
+var cors = require("cors");
 
 dotenv.config();
-
+app.use(cors());
 app.use(express.json());
 
 mongoose
@@ -17,6 +18,6 @@ mongoose
 app.use("/api/users", userRoute);
 app.use("/api/pins", pinRoute);
 
-app.listen(8880, () => {
+app.listen(8800, () => {
     console.log("Backend server is running!");
 });

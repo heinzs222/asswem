@@ -8,8 +8,10 @@ import axios from "axios";
 import { format } from "timeago.js";
 
 import Register from "./components/Register";
+import Login from "./components/Login";
 
 export default function App() {
+    const myStorage = window.localStorage;
     const mapRef = useRef(null);
     const onSelectCity = useCallback(({ longitude, latitude }) => {
         mapRef.current?.flyTo({
@@ -27,12 +29,15 @@ export default function App() {
         zoom: 14,
     });
     const [pins, setPins] = useState([]);
-    const [currentPlaceId, setCurrentPlaceId] = useState(null);
+    const [currentPlaceId, setCurrentPlaceId] = useState(
+        myStorage.getItem("user")
+    );
     const [newPlace, setNewPlace] = useState(null);
-
     const [title, setTitle] = useState(null);
     const [desc, setDesc] = useState(null);
     const [rating, setRating] = useState(0);
+    const [showRegister, setShowRegister] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
 
     useEffect(() => {
         const getPins = async () => {
@@ -78,7 +83,10 @@ export default function App() {
             console.log(error);
         }
     };
-
+    const handleLogout = () => {
+        myStorage.removeItem("user");
+        setCurrentUser(null);
+    };
     return (
         <div style={{ height: "100vh", width: "100%" }}>
             <Map
@@ -183,14 +191,33 @@ export default function App() {
                     </Popup>
                 )}
                 {currentUser ? (
-                    <button className="button logout">Logout</button>
+                    <button className="button logout" onClick={handleLogout}>
+                        Logout
+                    </button>
                 ) : (
                     <div className="buttons">
-                        <button className="button login">Login</button>
-                        <button className="button register">Register</button>
+                        <button
+                            className="button login"
+                            onClick={() => setShowLogin(true)}
+                        >
+                            Login
+                        </button>
+                        <button
+                            className="button register"
+                            onClick={() => setShowRegister(true)}
+                        >
+                            Register
+                        </button>
                     </div>
                 )}
-                <Register />
+                {showRegister && <Register setShowRegister={setShowRegister} />}
+                {showLogin && (
+                    <Login
+                        setShowLogin={setShowLogin}
+                        myStorage={myStorage}
+                        setCurrentUser={setCurrentUser}
+                    />
+                )}
             </Map>
         </div>
     );
