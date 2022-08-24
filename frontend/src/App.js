@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from "react";
-import Map, { Marker, Popup } from "react-map-gl";
+import Map, { GeolocateControl, Marker, Popup } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { LocationOn, Star } from "@material-ui/icons";
 import "./app.css";
@@ -13,6 +13,7 @@ import Login from "./components/Login";
 export default function App() {
     const myStorage = window.localStorage;
     const mapRef = useRef(null);
+    const currentLocation = useRef(null);
     const onSelectCity = useCallback(({ longitude, latitude }) => {
         mapRef.current?.flyTo({
             center: [longitude, latitude],
@@ -218,7 +219,15 @@ export default function App() {
                         setCurrentUser={setCurrentUser}
                     />
                 )}
+                <GeolocateControl
+                    ref={currentLocation}
+                    style={{ position: "absolute", right: "1460px" }}
+                />
             </Map>
+
+            <div className="aboutus">
+                <h1>About us</h1>
+            </div>
         </div>
     );
 }

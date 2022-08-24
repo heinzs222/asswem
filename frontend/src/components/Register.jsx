@@ -1,17 +1,21 @@
 import { Cancel, Room } from "@material-ui/icons";
 import axios from "axios";
 import { useRef, useState } from "react";
+import FormInput from "./FormInput";
 import "./register.css";
 
-export default function Register({ setShowRegister }) {
+export default function Register({ setShowRegister, setShowLogin, showLogin }) {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
     const usernameRef = useRef();
     const emailRef = useRef();
     const passwordRef = useRef();
+    const firstnameRef = useRef();
+    const lastnameRef = useRef();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         const newUser = {
             username: usernameRef.current.value,
             email: emailRef.current.value,
@@ -24,6 +28,7 @@ export default function Register({ setShowRegister }) {
             setSuccess(true);
         } catch (err) {
             setError(true);
+            console.log(err);
         }
     };
     return (
@@ -45,7 +50,10 @@ export default function Register({ setShowRegister }) {
                     Register
                 </button>
                 {success && (
-                    <span className="success">
+                    <span
+                        className="success"
+                        setShowRegister={setShowRegister(false)}
+                    >
                         Successfull. You can login now!
                     </span>
                 )}
